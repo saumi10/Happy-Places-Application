@@ -3,9 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/saumi/AndroidStudioProjects/HappyPlacesApplication/app/src/main/res/drawable/roundededittext.xml" value="0.30193439865433136" />
         <entry key="..\:/Users/saumi/AndroidStudioProjects/HappyPlacesApplication/app/src/main/res/drawable/savebutton.xml" value="0.2861111111111111" />
         <entry key="..\:/Users/saumi/AndroidStudioProjects/HappyPlacesApplication/app/src/main/res/font/font.xml" value="0.22864583333333333" />
-        <entry key="..\:/Users/saumi/AndroidStudioProjects/HappyPlacesApplication/app/src/main/res/layout/activity_add_happy_place.xml" value="0.33" />
+        <entry key="..\:/Users/saumi/AndroidStudioProjects/HappyPlacesApplication/app/src/main/res/layout/activity_add_happy_place.xml" value="0.25" />
         <entry key="..\:/Users/saumi/AndroidStudioProjects/HappyPlacesApplication/app/src/main/res/layout/activity_main.xml" value="0.21784420289855072" />
       </map>
     </option>
