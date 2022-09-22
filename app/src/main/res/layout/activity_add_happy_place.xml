@@ -158,19 +158,19 @@
 
             <ImageView
                 android:id="@+id/iv_place_image"
-                android:layout_width="145dp"
-                android:layout_height="149dp"
-                android:layout_marginTop="16dp"
                 style="@style/SelectableItemBackground"
-                android:scaleType="centerCrop"
-                android:foreground="?attr/selectableItemBackground"
+                android:layout_width="262dp"
+                android:layout_height="183dp"
+                android:layout_marginTop="16dp"
                 android:clickable="true"
-                android:src="@drawable/ic_baseline_image_24"
+                android:contentDescription="@string/addImage"
+                android:foreground="?attr/selectableItemBackground"
+                android:scaleType="centerCrop"
+                android:src="@drawable/photo_final"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/til_location"
-                android:contentDescription="@string/addImage" />
+                app:layout_constraintTop_toBottomOf="@+id/til_location" />
 
             <TextView
                 android:id="@+id/tv_add_image"
@@ -186,7 +186,7 @@
                 android:hint="@string/addImage"
                 android:textColorHint="@color/actionBar"
                 android:textSize="16sp"
-                android:textStyle="bold"
+                android:textStyle="italic"
                 app:layout_constraintBottom_toTopOf="@+id/btn_save"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.448"
@@ -196,13 +196,13 @@
 
             <Button
                 android:id="@+id/btn_save"
-                android:layout_width="336dp"
-                android:layout_height="41dp"
+                android:layout_width="357dp"
+                android:layout_height="35dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/savebutton"
-                android:foreground="?attr/selectableItemBackground"
                 android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
