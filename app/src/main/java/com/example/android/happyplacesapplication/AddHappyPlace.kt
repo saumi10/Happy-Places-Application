@@ -1,17 +1,17 @@
 package com.example.android.happyplacesapplication
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.karumi.dexter.Dexter
@@ -20,6 +20,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.NonCancellable.cancel
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -50,6 +51,7 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener{
         et_date.setOnClickListener(this)
         val tv_add_image=findViewById<TextView>(R.id.tv_add_image)
         tv_add_image.setOnClickListener(this)
+
 
     }
 
@@ -86,14 +88,38 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener{
         Toast.makeText(this,"FEATURE COMING SOON",Toast.LENGTH_SHORT).show()
     }
 
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode==Activity.RESULT_OK){
+            if(requestCode == GALLERY){
+                if(data!=null){
+                    val contentURI =data.data
+                    try{
+                        val selectedImageBitmap =MediaStore.Images.Media.getBitmap(this.contentResolver,contentURI)
+                        val iv_place_image=findViewById<ImageView>(R.id.iv_place_image)
+                         iv_place_image.setImageBitmap(selectedImageBitmap)
+                    }
+                    catch (e: IOException){
+                        e.printStackTrace()
+                        Toast.makeText(this@AddHappyPlace,"Failed to load Image from Gallery!",Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+
+
     private fun choosePhotoFromGallery() {
         Dexter.withActivity(this).withPermissions(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ).withListener(object:MultiplePermissionsListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport)
-            {if (report.areAllPermissionsGranted()){
-
+            {
+                if (report.areAllPermissionsGranted()){
+                    val galleryIntent =Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    this@AddHappyPlace.startActivityForResult(galleryIntent, GALLERY)
                 }
 
             }
@@ -132,8 +158,9 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener{
         val sdf=SimpleDateFormat(dateFormat,Locale.getDefault())
         val et_date=findViewById<EditText>(R.id.date)
         et_date.setText(sdf.format(cal.time).toString())
+    }
 
-
-
+    companion object  {
+        private const val GALLERY = 1
     }
 }
