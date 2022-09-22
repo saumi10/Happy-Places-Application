@@ -164,7 +164,6 @@
                 android:layout_marginTop="16dp"
                 android:clickable="true"
                 android:contentDescription="@string/addImage"
-                android:foreground="?attr/selectableItemBackground"
                 android:scaleType="centerCrop"
                 android:src="@drawable/photo_final"
                 app:layout_constraintEnd_toEndOf="parent"
