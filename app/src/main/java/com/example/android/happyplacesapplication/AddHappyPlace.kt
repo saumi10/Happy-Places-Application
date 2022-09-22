@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -74,7 +75,7 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener{
                     dialog, which ->
                     when(which){
                         0 -> choosePhotoFromGallery()
-                        1 -> featureSoon()
+                        1 -> takePhotoFromCamera()
                     }
                 }
                 pictureDialog.show()
@@ -84,19 +85,16 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener{
 
     }
 
-    private fun featureSoon(){
-        Toast.makeText(this,"FEATURE COMING SOON",Toast.LENGTH_SHORT).show()
-    }
-
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode==Activity.RESULT_OK){
+            val iv_place_image=findViewById<ImageView>(R.id.iv_place_image)
             if(requestCode == GALLERY){
                 if(data!=null){
                     val contentURI =data.data
                     try{
                         val selectedImageBitmap =MediaStore.Images.Media.getBitmap(this.contentResolver,contentURI)
-                        val iv_place_image=findViewById<ImageView>(R.id.iv_place_image)
+
                          iv_place_image.setImageBitmap(selectedImageBitmap)
                     }
                     catch (e: IOException){
@@ -105,9 +103,37 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener{
                     }
                 }
             }
+            else if(requestCode== CAMERA){
+                val thumbnail : Bitmap = data!!.extras!!.get("data") as Bitmap
+                iv_place_image.setImageBitmap(thumbnail)
+            }
         }
+
     }
 
+    private fun takePhotoFromCamera(){
+        Dexter.withActivity(this).withPermissions(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+        ).withListener(object:MultiplePermissionsListener {
+            override fun onPermissionsChecked(report: MultiplePermissionsReport)
+            {
+                if (report!!.areAllPermissionsGranted()){
+                    val galleryIntent =Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    this@AddHappyPlace.startActivityForResult(galleryIntent, CAMERA)
+                }
+
+            }
+
+            override fun onPermissionRationaleShouldBeShown(
+                permissions: MutableList<PermissionRequest>?,
+                token: PermissionToken?
+            ) {
+                showRationalDialogForPermissions()
+            }
+        }).onSameThread().check()
+    }
 
     private fun choosePhotoFromGallery() {
         Dexter.withActivity(this).withPermissions(
@@ -116,7 +142,7 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener{
         ).withListener(object:MultiplePermissionsListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport)
             {
-                if (report.areAllPermissionsGranted()){
+                if (report!!.areAllPermissionsGranted()){
                     val galleryIntent =Intent(Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     this@AddHappyPlace.startActivityForResult(galleryIntent, GALLERY)
@@ -162,5 +188,6 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener{
 
     companion object  {
         private const val GALLERY = 1
+        private const val CAMERA =2
     }
 }
