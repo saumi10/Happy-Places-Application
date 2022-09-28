@@ -1,4 +1,4 @@
-package com.example.android.happyplacesapplication
+package com.example.android.happyplacesapplication.activities
 
 import android.Manifest
 import android.app.Activity
@@ -18,24 +18,37 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.example.android.happyplacesapplication.R
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.NonCancellable.cancel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
 
     private var cal=Calendar.getInstance()
     private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
+    private lateinit var et_date:EditText
+    private lateinit var tv_add_image:TextView
+    private lateinit var et_title:EditText
+    private lateinit var et_description:EditText
+    private lateinit var et_location:EditText
+    private lateinit var btn_save:Button
+    private lateinit var iv_place_image:ImageView
+    private var storageRef = Firebase.storage
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,11 +69,55 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
             updateDate()
         }
 
-        val et_date=findViewById<EditText>(R.id.date)
+        et_date=findViewById(R.id.date)
         et_date.setOnClickListener(this)
 
-        val tv_add_image=findViewById<TextView>(R.id.tv_add_image)
+        tv_add_image=findViewById(R.id.tv_add_image)
         tv_add_image.setOnClickListener(this)
+
+        et_title=findViewById(R.id.ed_title)
+        et_description=findViewById(R.id.description)
+        et_location=findViewById(R.id.location)
+        iv_place_image=findViewById(R.id.iv_place_image)
+        btn_save=findViewById(R.id.btn_save)
+
+        btn_save.setOnClickListener {
+
+            val sTitle = et_title.text.toString().trim()
+            val sDescription = et_description.text.toString().trim()
+            val slocation = et_location.text.toString().trim()
+            val sDate = et_date.text.toString().trim()
+
+            saveToFirestore(sTitle,sDescription,sDate,slocation)
+            //saveImageToCloudStorage
+            
+
+
+            et_title.text.clear()
+            et_description.text.clear()
+            et_location.text.clear()
+            et_date.text.clear()
+        }
+
+    }
+
+    fun saveToFirestore(sTitle:String,sDescription:String,sDate:String,sLocation:String) {
+        val db = FirebaseFirestore.getInstance()
+        val place:MutableMap<String, Any> =HashMap()
+        place["Title"]=sTitle
+        place["Description"]=sDescription
+        place["Date"]=sDate
+        place["Location"]=sLocation
+
+        db.collection("Happy Place").add(place)
+            .addOnSuccessListener {
+                Toast.makeText(this@AddHappyPlace, "Happy Place Successfully Added", Toast.LENGTH_SHORT).show()
+
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to add Happy Place", Toast.LENGTH_SHORT).show()
+            }
+
     }
 
 
@@ -93,11 +150,16 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
 
     }
 
+    private fun updateDate(){
+        val dateFormat="dd.MM.yyyy"
+        val sdf=SimpleDateFormat(dateFormat,Locale.getDefault())
+        et_date.setText(sdf.format(cal.time).toString())
+    }
+
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode==Activity.RESULT_OK){
-            val iv_place_image=findViewById<ImageView>(R.id.iv_place_image)
             if(requestCode == GALLERY){
                 if(data!=null){
                     val contentURI =data.data
@@ -201,15 +263,6 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
 
 
     }
-
-
-    private fun updateDate(){
-        val dateFormat="dd.MM.yyyy"
-        val sdf=SimpleDateFormat(dateFormat,Locale.getDefault())
-        val et_date=findViewById<EditText>(R.id.date)
-        et_date.setText(sdf.format(cal.time).toString())
-    }
-
 
     private fun saveImageToInternalStorage(bitmap: Bitmap):Uri {
         val wrapper = ContextWrapper(applicationContext)

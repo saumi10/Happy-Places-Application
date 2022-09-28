@@ -14,13 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HappyPlacesApplication">
         <activity
-            android:name=".AddHappyPlace"
+            android:name=".activities.AddHappyPlace"
             android:exported="true"
             android:label="AddHappyPlace"
             android:windowSoftInputMode="stateVisible|adjustResize"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

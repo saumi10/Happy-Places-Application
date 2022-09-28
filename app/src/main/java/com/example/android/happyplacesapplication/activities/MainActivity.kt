@@ -1,8 +1,9 @@
-package com.example.android.happyplacesapplication
+package com.example.android.happyplacesapplication.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.android.happyplacesapplication.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
