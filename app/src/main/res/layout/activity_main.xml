@@ -7,6 +7,23 @@
     tools:context=".activities.MainActivity"
     android:background="@color/bgcolor">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_happy_places_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_no_records_available"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/note_text_no_happy_places_found_yet_kindly_add_one"
+        android:textSize="14sp"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddHappyPlace"
         android:layout_width="wrap_content"
