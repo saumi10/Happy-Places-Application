@@ -145,7 +145,6 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    
                     android:hint="@string/location"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
