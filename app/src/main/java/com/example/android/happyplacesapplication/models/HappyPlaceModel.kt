@@ -1,5 +1,7 @@
 package com.example.android.happyplacesapplication.models
 
+import java.io.Serializable
+
 data class HappyPlaceModel(
     val id:Int,
     val title:String,
@@ -10,4 +12,4 @@ data class HappyPlaceModel(
     val latitude:Double,
     val longitude:Double
 
-)
+):Serializable

@@ -9,4 +9,5 @@
     <string name="date">Date</string>
     <string name="note_text_no_happy_places_found_yet_kindly_add_one">Happy Places Not Found . Kindly Add one</string>
     <string name="happy_place_detail">Happy Place Detail</string>
+    <string name="google_maps_api_key">AIzaSyAi6dQMG6026nV6xFu_LVpr4bQ_60z7nOI</string>
 </resources>

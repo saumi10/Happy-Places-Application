@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.happyplacesapplication.R
+import com.example.android.happyplacesapplication.database.DatabaseHandler
 import com.example.android.happyplacesapplication.models.HappyPlaceModel
 import kotlinx.android.synthetic.main.item_happy_place.view.*
 
@@ -18,6 +19,8 @@ open class HappyPlacesAdapter(
     private val context: Context,
     private var list: ArrayList<HappyPlaceModel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var onClickListener: OnClickListener? = null
 
     /**
      * Inflates the item views which is designed in xml layout file
@@ -54,6 +57,12 @@ open class HappyPlacesAdapter(
             holder.itemView.tvTitle.text = model.title
             holder.itemView.tvDescription.text = model.description
             holder.itemView.tvDate.text=model.date
+            holder.itemView.setOnClickListener {
+
+                if (onClickListener != null) {
+                    onClickListener!!.onClick(position, model)
+                }
+            }
         }
     }
 
@@ -64,6 +73,27 @@ open class HappyPlacesAdapter(
         return list.size
     }
 
+    fun removeAt(position: Int) {
+
+        val dbHandler = DatabaseHandler(context)
+        val isDeleted = dbHandler.deleteHappyPlace(list[position])
+
+        if (isDeleted > 0) {
+            list.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
+    fun setOnClickListener(onClickListener: OnClickListener) {
+        this.onClickListener = onClickListener
+    }
+    // END
+
+    // TODO (Step 4: Create an interface for onclickListener)
+    // START
+    interface OnClickListener {
+        fun onClick(position: Int, model: HappyPlaceModel)
+    }
     /**
      * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
      */

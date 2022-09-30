@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.android.happyplacesapplication.R
 import com.example.android.happyplacesapplication.adapters.HappyPlacesAdapter
 import com.example.android.happyplacesapplication.database.DatabaseHandler
 import com.example.android.happyplacesapplication.models.HappyPlaceModel
+import com.example.android.happyplacesapplication.util.SwipeToDeleteCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -63,8 +66,30 @@ class MainActivity : AppCompatActivity() {
 
         val placesAdapter = HappyPlacesAdapter(this, happyPlacesList)
         rv_happy_places_list.adapter = placesAdapter
+        placesAdapter.setOnClickListener(object : HappyPlacesAdapter.OnClickListener{
+            override fun onClick(position: Int, model: HappyPlaceModel) {
+                val intent = Intent(this@MainActivity, HappyPlaceDetailActivity::class.java)
+                intent.putExtra(EXTRA_PLACE_DETAILS , model)
+                startActivity(intent)
+            }
+        })
+
+        val deleteSwipeHandler = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // TODO (Step 6: Call the adapter function when it is swiped for delete)
+                // START
+                val adapter = rv_happy_places_list.adapter as HappyPlacesAdapter
+                adapter.removeAt(viewHolder.adapterPosition)
+
+                getHappyPlacesListFromLocalDB() // Gets the latest list from the local database after item being delete from it.
+                // END
+            }
+        }
+        val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
+        deleteItemTouchHelper.attachToRecyclerView(rv_happy_places_list)
     }
     companion object {
         var ADD_PLACE_ACTIVITY_RESULT_CODE = 1
+        var EXTRA_PLACE_DETAILS="extra_place_details"
     }
 }

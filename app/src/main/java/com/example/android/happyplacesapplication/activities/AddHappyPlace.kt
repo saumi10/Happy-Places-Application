@@ -23,6 +23,10 @@ import androidx.appcompat.widget.Toolbar
 import com.example.android.happyplacesapplication.R
 import com.example.android.happyplacesapplication.database.DatabaseHandler
 import com.example.android.happyplacesapplication.models.HappyPlaceModel
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -76,6 +80,12 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             updateDate()
         }
+        if (!Places.isInitialized()) {
+            Places.initialize(
+                this@AddHappyPlace,
+                resources.getString(R.string.google_maps_api_key)
+            )
+        }
 
 
         et_date=findViewById(R.id.date)
@@ -84,9 +94,11 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
         tv_add_image=findViewById(R.id.tv_add_image)
         tv_add_image.setOnClickListener(this)
 
+        et_location=findViewById(R.id.location)
+        et_location.setOnClickListener(this)
+
         et_title=findViewById(R.id.ed_title)
         et_description=findViewById(R.id.description)
-        et_location=findViewById(R.id.location)
         iv_place_image=findViewById(R.id.iv_place_image)
 
         btn_save=findViewById(R.id.btn_save)
@@ -121,6 +133,23 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
 
             }
 
+            R.id.location -> {
+                try {
+
+                    val fields = listOf(
+                        Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG,
+                        Place.Field.ADDRESS
+                    )
+
+                    val intent =
+                        Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                            .build(this@AddHappyPlace)
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
             R.id.btn_save -> {
                 when{
                     et_title.text.isNullOrEmpty() -> {
@@ -129,9 +158,9 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
                     et_description.text.isNullOrEmpty() -> {
                         Toast.makeText(this,"Please Enter Description" , Toast.LENGTH_SHORT).show()
                     }
-                    et_location.text.isNullOrEmpty() -> {
-                        Toast.makeText(this,"Please Enter Location" , Toast.LENGTH_SHORT).show()
-                    }
+                    //et_location.text.isNullOrEmpty() -> {
+                    //    Toast.makeText(this,"Please Enter Location" , Toast.LENGTH_SHORT).show()
+                    //}
                     saveImageToInternalStorage == null -> {
                         Toast.makeText(this,"Please Add an Image" , Toast.LENGTH_SHORT).show()
                     }
@@ -200,6 +229,14 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
 
                 iv_place_image.setImageBitmap(thumbnail)
                 Toast.makeText(this@AddHappyPlace,"Image Added",Toast.LENGTH_SHORT).show()
+            }
+            else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+
+                val place: Place = Autocomplete.getPlaceFromIntent(data!!)
+
+                et_location.setText(place.address)
+                mLatitude = place.latLng!!.latitude
+                mLongitude = place.latLng!!.longitude
             }
         }
 
@@ -298,6 +335,7 @@ class AddHappyPlace : AppCompatActivity(), View.OnClickListener {
         private const val GALLERY = 1
         private const val CAMERA =2
         private const val IMAGE_DIRECTORY="HappyPlacesImages"
+        private const val PLACE_AUTOCOMPLETE_REQUEST_CODE=3
     }
 
 }
