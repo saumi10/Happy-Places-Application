@@ -3,7 +3,7 @@
     <string name="title_">Title</string>
     <string name="addHappyPlaceTitle">Add Happy Place</string>
     <string name="description">Description</string>
-    <string name="location">Location (enter manually for now/ map feature soon)</string>
+    <string name="location">Location </string>
     <string name="addImage">Add Image</string>
     <string name="btn_text_save">SAVE</string>
     <string name="date">Date</string>
