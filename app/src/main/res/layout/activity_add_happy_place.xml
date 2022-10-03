@@ -146,6 +146,8 @@
                     android:ems="10"
                     android:inputType="textPersonName"
                     android:hint="@string/location"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
